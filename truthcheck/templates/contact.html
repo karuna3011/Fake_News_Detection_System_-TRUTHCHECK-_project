@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+{% block page_id %}contact{% endblock %}
+{% block title %}Contact — TruthCheck AI{% endblock %}
+
+{% block content %}
+<div style="padding:calc(var(--nav-h) + 3rem) 5% 6rem;position:relative;z-index:2">
+  <div class="container" style="max-width:900px">
+
+    <div class="section-header reveal">
+      <div class="section-tag">Contact</div>
+      <h1 class="section-title display">Get in <span class="gradient-text">Touch</span></h1>
+      <p class="section-subtitle">Have a question, bug report, or partnership idea? We'd love to hear from you.</p>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1.5fr;gap:2rem;align-items:start">
+
+      <!-- Contact info -->
+      <div class="reveal">
+        {% for icon, label, value in [
+          ('📧','Email','hello@truthcheck.ai'),
+          ('💬','Discord','discord.gg/truthcheck'),
+          ('🐦','Twitter','@truthcheckAI'),
+          ('🐙','GitHub','github.com/truthcheck'),
+        ] %}
+        <div class="card" style="margin-bottom:1rem;display:flex;align-items:center;gap:1rem;padding:1.1rem 1.25rem">
+          <span style="font-size:1.3rem">{{ icon }}</span>
+          <div>
+            <div style="font-size:0.75rem;color:var(--text-muted);font-weight:600;text-transform:uppercase;letter-spacing:0.06em">{{ label }}</div>
+            <div style="font-size:0.9rem;font-weight:500;margin-top:0.1rem">{{ value }}</div>
+          </div>
+        </div>
+        {% endfor %}
+
+        <div class="card" style="margin-top:1.5rem;background:rgba(0,212,170,0.04);border-color:rgba(0,212,170,0.15)">
+          <p style="font-size:0.85rem;color:var(--text-secondary);line-height:1.7">
+            ⏱ Average response time: <strong style="color:var(--text-primary)">under 24 hours</strong> on business days.
+          </p>
+        </div>
+      </div>
+
+      <!-- Contact form -->
+      <div class="card reveal reveal-delay-1">
+        <form id="contact-form" novalidate>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+            <div class="form-group">
+              <label class="form-label">First Name</label>
+              <input type="text" name="first_name" class="form-input" placeholder="John" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Last Name</label>
+              <input type="text" name="last_name" class="form-input" placeholder="Doe" required>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Email Address</label>
+            <div class="input-wrapper">
+              <span class="input-icon">✉️</span>
+              <input type="email" name="email" class="form-input" placeholder="you@example.com" required>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Subject</label>
+            <select name="subject" class="form-input" style="cursor:pointer">
+              <option value="">Select a topic…</option>
+              <option>General Question</option>
+              <option>Bug Report</option>
+              <option>API / Integration</option>
+              <option>Partnership</option>
+              <option>Press Inquiry</option>
+              <option>Other</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Message</label>
+            <textarea name="message" class="detect-textarea" style="min-height:140px" placeholder="Tell us what's on your mind…" required></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;padding:0.85rem" id="contact-submit">
+            Send Message →
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.getElementById('contact-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const btn = document.getElementById('contact-submit');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span> Sending…';
+  await new Promise(r => setTimeout(r, 1200));
+  Toast.show('Message sent! We\'ll get back to you within 24 hours. 📬', 'success', 5000);
+  e.target.reset();
+  btn.disabled = false;
+  btn.textContent = 'Send Message →';
+});
+</script>
+{% endblock %}

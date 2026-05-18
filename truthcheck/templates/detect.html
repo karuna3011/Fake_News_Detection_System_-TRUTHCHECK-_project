@@ -1,0 +1,144 @@
+{% extends "base.html" %}
+{% block page_id %}detect{% endblock %}
+{% block title %}Analyze News — TruthCheck AI{% endblock %}
+
+{% block content %}
+<div class="detect-container">
+  <div class="hero-badge" style="margin:0 auto 1.5rem;width:fit-content">
+    <span class="hero-badge-dot"></span>
+    Real-time AI Analysis
+  </div>
+  <h1 class="detect-title display">
+    <span class="gradient-text">AI Fake News</span> Detector
+  </h1>
+  <p class="detect-subtitle">
+    Paste an article, news snippet, or URL below. Our AI model will analyze it instantly.
+  </p>
+
+  <!-- Input mode tabs -->
+  <div class="detect-tabs">
+    <button class="detect-tab active" data-tab="text">📝 Paste Text</button>
+    <button class="detect-tab" data-tab="url">🌐 Enter URL</button>
+  </div>
+
+  <!-- Text input -->
+  <div id="detect-text">
+    <div class="detect-input-area">
+      <textarea
+        id="news-text"
+        class="detect-textarea"
+        placeholder="Paste your article or news content here…
+
+Example: 'SHOCKING: Scientists discover that drinking coffee reverses aging completely, Big Pharma hiding the truth!!!'
+
+The more text you provide, the more accurate the analysis will be."
+        maxlength="50000"
+      ></textarea>
+      <span class="detect-char-count" id="char-count">0 / 50,000</span>
+    </div>
+  </div>
+
+  <!-- URL input -->
+  <div id="detect-url-section" class="hidden" style="margin-bottom:1.25rem">
+    <input
+      type="url"
+      id="url-input"
+      class="detect-url-input"
+      placeholder="https://example.com/article-to-analyze"
+    >
+    <p style="font-size:0.78rem;color:var(--text-muted);margin-top:0.5rem">
+      ⚠️ Some websites block automated access. Text paste is recommended for best results.
+    </p>
+  </div>
+
+  <div class="detect-actions">
+    <div style="display:flex;gap:0.5rem;flex-wrap:wrap">
+      <button class="btn btn-ghost btn-sm" onclick="document.getElementById('news-text').value='';document.getElementById('char-count').textContent='0 / 50,000'">
+        🗑 Clear
+      </button>
+      <button class="btn btn-ghost btn-sm" id="sample-btn">
+        📋 Load Sample
+      </button>
+    </div>
+    <button class="btn btn-primary btn-lg" id="analyze-btn">
+      🔍 Analyze
+    </button>
+  </div>
+
+  <!-- Analyzing overlay -->
+  <div class="card analyzing-overlay" id="analyzing-overlay" style="margin-top:2rem">
+    <div class="analyzing-ring"></div>
+    <div>
+      <h3 style="font-size:1.1rem;margin-bottom:0.5rem">Analyzing Article…</h3>
+      <p style="color:var(--text-secondary);font-size:0.875rem" id="analyzing-status">Vectorizing text features…</p>
+    </div>
+  </div>
+
+  <!-- Result section -->
+  <div id="result-section" class="hidden"></div>
+
+  <!-- Tips -->
+  <div class="card" style="margin-top:2.5rem;background:rgba(0,153,255,0.04);border-color:rgba(0,153,255,0.15)">
+    <h4 style="font-size:0.875rem;font-weight:700;margin-bottom:0.75rem;color:var(--c-blue)">💡 Tips for Best Results</h4>
+    <ul style="font-size:0.84rem;color:var(--text-secondary);display:flex;flex-direction:column;gap:0.4rem;padding-left:1.25rem">
+      <li>Include the full article text, not just the headline</li>
+      <li>Longer articles (200+ words) provide more accurate results</li>
+      <li>The AI analyzes writing style, claims, and linguistic patterns</li>
+      <li>Always cross-reference with multiple trusted sources</li>
+      <li>AI detection is a tool — use your own judgment as well</li>
+    </ul>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+const SAMPLE_FAKE = `SHOCKING BOMBSHELL: Scientists Have Discovered That the Government Has Been Hiding a Miracle Cure for Cancer for DECADES!!!
+
+You won't believe what mainstream media doesn't want you to know! A team of rogue scientists — BANNED by Big Pharma — has finally LEAKED documents proving that a simple common herb found in your backyard DESTROYS cancer cells overnight!!! 
+
+The deep state cabal has been suppressing this information for 40+ years because the cancer treatment industry generates $200 BILLION per year. WAKE UP SHEEPLE! They don't want you healthy, they want you dependent on their toxic chemotherapy drugs!
+
+Exclusive insider testimony from a whistleblower confirms that top government officials have been secretly using this cure themselves while feeding the public lies. Share this before they DELETE it!! The truth is being censored everywhere!!!`;
+
+const SAMPLE_REAL = `Scientists at Johns Hopkins University have published findings indicating that a newly developed immunotherapy treatment shows promise in treating certain types of pancreatic cancer, according to a study released Monday in the New England Journal of Medicine.
+
+The research, which involved 340 participants across 12 medical centers, found that patients receiving the experimental treatment showed a 34% improvement in progression-free survival compared to those receiving standard chemotherapy.
+
+"While these results are encouraging, we want to emphasize that this is still in early clinical trial stages," said Dr. Rebecca Torres, the study's lead author. "Further research with larger patient populations will be necessary before this can be considered for broad clinical use."
+
+The National Cancer Institute provided $12 million in funding for the three-year study. Researchers plan to begin Phase 3 trials later this year.`;
+
+document.getElementById('sample-btn')?.addEventListener('click', () => {
+  const isFake = Math.random() > 0.5;
+  const textarea = document.getElementById('news-text');
+  textarea.value = isFake ? SAMPLE_FAKE : SAMPLE_REAL;
+  const event = new Event('input');
+  textarea.dispatchEvent(event);
+  Toast.show(`Loaded sample ${isFake ? 'FAKE' : 'REAL'} article — try analyzing it!`, 'info');
+});
+
+// Rotating status messages during analysis
+const statusMessages = [
+  'Vectorizing text features…',
+  'Extracting linguistic patterns…',
+  'Running through ML classifier…',
+  'Calculating confidence scores…',
+  'Generating explanation…'
+];
+
+let statusInterval;
+const analyzeBtn = document.getElementById('analyze-btn');
+analyzeBtn?.addEventListener('click', () => {
+  let i = 0;
+  const statusEl = document.getElementById('analyzing-status');
+  statusInterval = setInterval(() => {
+    if (statusEl) statusEl.textContent = statusMessages[i++ % statusMessages.length];
+  }, 700);
+});
+
+// Clear interval when result shows
+const observer = new MutationObserver(() => clearInterval(statusInterval));
+observer.observe(document.getElementById('result-section'), { attributes: true });
+</script>
+{% endblock %}

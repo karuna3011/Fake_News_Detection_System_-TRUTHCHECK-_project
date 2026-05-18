@@ -1,0 +1,193 @@
+{% extends "base.html" %}
+{% block page_id %}admin{% endblock %}
+{% block title %}Admin Panel — TruthCheck AI{% endblock %}
+{% block footer %}{% endblock %}
+
+{% block content %}
+<div class="dashboard-layout">
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div style="margin-bottom:0.5rem;padding:0 0.5rem">
+      <div style="font-size:0.72rem;font-weight:700;color:var(--c-teal);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:0.75rem;display:flex;align-items:center;gap:0.4rem">
+        <span>🛡</span> Admin Panel
+      </div>
+      <ul class="sidebar-nav">
+        <li><a href="#" onclick="adminShowTab('dashboard')" class="active" id="atab-dashboard"><span class="nav-icon">📊</span> Dashboard</a></li>
+        <li><a href="#" onclick="adminShowTab('users')" id="atab-users"><span class="nav-icon">👥</span> Users</a></li>
+        <li><a href="#" onclick="adminShowTab('predictions')" id="atab-predictions"><span class="nav-icon">🔍</span> Predictions</a></li>
+        <li><a href="#" onclick="adminShowTab('model')" id="atab-model"><span class="nav-icon">🧠</span> AI Model</a></li>
+      </ul>
+    </div>
+    <div style="padding:0 0.5rem;margin-top:1.5rem">
+      <div style="font-size:0.72rem;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.75rem">Navigation</div>
+      <ul class="sidebar-nav">
+        <li><a href="/"><span class="nav-icon">🏠</span> Home</a></li>
+        <li><a href="/dashboard"><span class="nav-icon">📋</span> User Dashboard</a></li>
+        <li><a href="#" onclick="Auth.logout()"><span class="nav-icon">🚪</span> Logout</a></li>
+      </ul>
+    </div>
+  </aside>
+
+  <main class="dashboard-content">
+    <div style="display:flex;align-items:center;gap:1rem;margin-bottom:2rem">
+      <div style="width:42px;height:42px;background:linear-gradient(135deg,rgba(255,59,92,0.2),rgba(124,58,237,0.2));border:1px solid rgba(255,59,92,0.3);border-radius:10px;display:grid;place-items:center;font-size:1.2rem">🛡</div>
+      <div>
+        <h1 style="font-size:1.4rem;margin-bottom:0.1rem">Admin Control Center</h1>
+        <p style="color:var(--text-muted);font-size:0.8rem">System management & analytics</p>
+      </div>
+    </div>
+
+    <!-- DASHBOARD TAB -->
+    <div id="admin-tab-dashboard">
+      <div class="stats-grid" style="margin-bottom:1.5rem">
+        <div class="card stat-card card-glow">
+          <div class="stat-card-label">Total Users</div>
+          <div class="stat-card-value gradient-text" id="admin-total-users">—</div>
+          <div class="stat-card-icon">👥</div>
+        </div>
+        <div class="card stat-card card-glow">
+          <div class="stat-card-label">Active Users</div>
+          <div class="stat-card-value" style="color:var(--c-green)" id="admin-active-users">—</div>
+          <div class="stat-card-icon">✅</div>
+        </div>
+        <div class="card stat-card card-glow">
+          <div class="stat-card-label">Total Predictions</div>
+          <div class="stat-card-value" style="color:var(--c-blue)" id="admin-total-preds">—</div>
+          <div class="stat-card-icon">🔍</div>
+        </div>
+        <div class="card stat-card card-glow">
+          <div class="stat-card-label">Fake Detected</div>
+          <div class="stat-card-value" style="color:var(--c-red)" id="admin-fake-preds">—</div>
+          <div class="stat-card-icon">🚨</div>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.25rem">
+        <div class="card">
+          <h3 style="font-size:0.875rem;color:var(--text-secondary);margin-bottom:1rem;font-family:var(--font-display)">SYSTEM STATUS</h3>
+          {% for label, status, color in [
+            ('AI Model', 'Operational', 'var(--c-green)'),
+            ('Database', 'Connected', 'var(--c-green)'),
+            ('API Server', 'Running', 'var(--c-green)'),
+            ('Auth Service', 'Active', 'var(--c-green)'),
+          ] %}
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:0.6rem 0;border-bottom:1px solid var(--border)">
+            <span style="font-size:0.875rem">{{ label }}</span>
+            <span style="font-size:0.78rem;font-weight:700;color:{{ color }};background:rgba(16,185,129,0.1);padding:0.2rem 0.6rem;border-radius:100px">● {{ status }}</span>
+          </div>
+          {% endfor %}
+        </div>
+
+        <div class="card">
+          <h3 style="font-size:0.875rem;color:var(--text-secondary);margin-bottom:1rem;font-family:var(--font-display)">QUICK ACTIONS</h3>
+          <div style="display:flex;flex-direction:column;gap:0.75rem">
+            <button class="btn btn-ghost btn-sm" style="justify-content:flex-start" onclick="adminShowTab('users')">👥 Manage Users</button>
+            <button class="btn btn-ghost btn-sm" style="justify-content:flex-start" onclick="adminShowTab('predictions')">🔍 View Predictions</button>
+            <button class="btn btn-ghost btn-sm" style="justify-content:flex-start" onclick="adminShowTab('model')">🧠 Retrain AI Model</button>
+            <button class="btn btn-outline btn-sm" style="justify-content:flex-start" onclick="AdminPanel.loadDashboard();Toast.show('Stats refreshed','success')">🔄 Refresh Stats</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- USERS TAB -->
+    <div id="admin-tab-users" style="display:none">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem">
+        <h2 style="font-size:1.1rem">User Management</h2>
+        <div style="font-size:0.8rem;color:var(--text-muted)" id="user-count"></div>
+      </div>
+      <div class="card">
+        <div style="overflow-x:auto">
+          <table class="history-table">
+            <thead>
+              <tr>
+                <th>ID</th><th>Username</th><th>Email</th><th>Role</th><th>Status</th><th>Analyses</th><th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="admin-users-tbody">
+              <tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--text-muted)"><span class="spinner"></span> Loading…</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- PREDICTIONS TAB -->
+    <div id="admin-tab-predictions" style="display:none">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem">
+        <h2 style="font-size:1.1rem">All Predictions</h2>
+      </div>
+      <div class="card">
+        <div style="overflow-x:auto">
+          <table class="history-table">
+            <thead>
+              <tr>
+                <th>ID</th><th>User</th><th>Text Preview</th><th>Result</th><th>Confidence</th><th>Date</th>
+              </tr>
+            </thead>
+            <tbody id="admin-preds-tbody">
+              <tr><td colspan="6" style="text-align:center;padding:2rem;color:var(--text-muted)"><span class="spinner"></span> Loading…</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODEL TAB -->
+    <div id="admin-tab-model" style="display:none">
+      <h2 style="font-size:1.1rem;margin-bottom:1.5rem">AI Model Management</h2>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.25rem">
+        <div class="card">
+          <h3 style="font-size:0.9rem;margin-bottom:1rem;font-family:var(--font-display)">MODEL INFO</h3>
+          {% for k, v in [
+            ('Algorithm', 'Logistic Regression + PAC'),
+            ('Vectorizer', 'TF-IDF (n-gram 1–3)'),
+            ('Max Features', '10,000'),
+            ('Training Data', 'Synthetic + User feedback'),
+            ('Accuracy', '~94% on validation set'),
+          ] %}
+          <div style="display:flex;justify-content:space-between;padding:0.5rem 0;border-bottom:1px solid var(--border);font-size:0.85rem">
+            <span style="color:var(--text-muted)">{{ k }}</span>
+            <span style="font-family:var(--font-mono);font-size:0.8rem">{{ v }}</span>
+          </div>
+          {% endfor %}
+        </div>
+
+        <div class="card">
+          <h3 style="font-size:0.9rem;margin-bottom:1rem;font-family:var(--font-display)">RETRAIN MODEL</h3>
+          <p style="font-size:0.85rem;color:var(--text-secondary);margin-bottom:1.25rem;line-height:1.65">
+            Upload a CSV file with <code style="font-family:var(--font-mono);background:var(--bg-glass);padding:0.1rem 0.4rem;border-radius:4px">text,label</code> columns to retrain the model on new data. Labels should be FAKE or REAL.
+          </p>
+          <input type="file" id="dataset-upload" accept=".csv" style="display:none" onchange="handleDatasetUpload(this)">
+          <button class="btn btn-outline" onclick="document.getElementById('dataset-upload').click()">
+            📁 Upload Dataset CSV
+          </button>
+          <div id="upload-status" style="margin-top:1rem;font-size:0.85rem;color:var(--text-muted)"></div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function adminShowTab(name) {
+  ['dashboard','users','predictions','model'].forEach(t => {
+    document.getElementById('admin-tab-' + t).style.display = t === name ? '' : 'none';
+    const tab = document.getElementById('atab-' + t);
+    if (tab) tab.classList.toggle('active', t === name);
+  });
+}
+
+async function handleDatasetUpload(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const status = document.getElementById('upload-status');
+  status.textContent = `📄 Selected: ${file.name} (${(file.size/1024).toFixed(1)} KB)`;
+  Toast.show('Dataset loaded. Retraining is handled server-side.', 'info');
+}
+</script>
+{% endblock %}

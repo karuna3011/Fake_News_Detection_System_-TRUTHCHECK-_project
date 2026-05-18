@@ -1,0 +1,187 @@
+{% extends "base.html" %}
+{% block page_id %}dashboard{% endblock %}
+{% block title %}Dashboard — TruthCheck AI{% endblock %}
+{% block footer %}{% endblock %}
+
+{% block content %}
+<div class="dashboard-layout">
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div style="margin-bottom:2rem;padding:0 0.5rem">
+      <div style="font-size:0.75rem;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.75rem">Menu</div>
+      <ul class="sidebar-nav">
+        <li><a href="/dashboard" class="active"><span class="nav-icon">📊</span> Overview</a></li>
+        <li><a href="/detect"><span class="nav-icon">🔍</span> Analyze News</a></li>
+        <li><a href="#history" onclick="showSection('history')"><span class="nav-icon">📋</span> History</a></li>
+        <li><a href="#analytics" onclick="showSection('analytics')"><span class="nav-icon">📈</span> Analytics</a></li>
+      </ul>
+    </div>
+    <div style="padding:0 0.5rem">
+      <div style="font-size:0.75rem;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.75rem">Account</div>
+      <ul class="sidebar-nav">
+        <li><a href="#" onclick="Auth.logout()"><span class="nav-icon">🚪</span> Logout</a></li>
+      </ul>
+    </div>
+
+    <!-- User card at bottom -->
+    <div style="position:absolute;bottom:1.5rem;left:1rem;right:1rem">
+      <div class="card" style="padding:1rem;border-radius:var(--radius)">
+        <div style="display:flex;align-items:center;gap:0.75rem">
+          <div style="width:36px;height:36px;border-radius:50%;background:var(--grad-brand);display:grid;place-items:center;font-size:0.9rem;flex-shrink:0">👤</div>
+          <div style="overflow:hidden">
+            <div class="user-name" style="font-size:0.85rem;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Loading…</div>
+            <div class="user-email" style="font-size:0.72rem;color:var(--text-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main content -->
+  <main class="dashboard-content">
+
+    <!-- Header -->
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:2rem;flex-wrap:wrap;gap:1rem">
+      <div>
+        <h1 style="font-size:1.5rem;margin-bottom:0.25rem">Welcome back, <span class="user-name gradient-text">User</span> 👋</h1>
+        <p style="color:var(--text-muted);font-size:0.875rem">Here's your analysis overview</p>
+      </div>
+      <a href="/detect" class="btn btn-primary btn-sm">🔍 New Analysis</a>
+    </div>
+
+    <!-- Stats grid -->
+    <div class="stats-grid" id="overview-section">
+      <div class="card stat-card card-glow">
+        <div class="stat-card-label">Total Analyses</div>
+        <div class="stat-card-value gradient-text" id="stat-total">—</div>
+        <div class="stat-card-icon">📊</div>
+      </div>
+      <div class="card stat-card card-glow">
+        <div class="stat-card-label">Fake Detected</div>
+        <div class="stat-card-value" style="color:var(--c-red)" id="stat-fake">—</div>
+        <div class="stat-card-icon">🚨</div>
+      </div>
+      <div class="card stat-card card-glow">
+        <div class="stat-card-label">Real Verified</div>
+        <div class="stat-card-value" style="color:var(--c-green)" id="stat-real">—</div>
+        <div class="stat-card-icon">✅</div>
+      </div>
+      <div class="card stat-card card-glow">
+        <div class="stat-card-label">Avg. Confidence</div>
+        <div class="stat-card-value" style="color:var(--c-teal)" id="stat-confidence">—</div>
+        <div class="stat-card-icon">🎯</div>
+      </div>
+    </div>
+
+    <!-- Charts row -->
+    <div style="display:grid;grid-template-columns:1fr 2fr;gap:1.25rem;margin-bottom:2rem" id="analytics-section">
+      <div class="card" style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:1.5rem">
+        <h3 style="font-size:0.9rem;color:var(--text-secondary);margin-bottom:1.25rem;font-family:var(--font-display)">RESULT DISTRIBUTION</h3>
+        <canvas id="stats-chart" width="180" height="180" style="max-width:180px"></canvas>
+      </div>
+
+      <div class="card">
+        <h3 style="font-size:0.9rem;color:var(--text-secondary);margin-bottom:1.25rem;font-family:var(--font-display)">RECENT ACTIVITY</h3>
+        <canvas id="activity-chart" height="160"></canvas>
+      </div>
+    </div>
+
+    <!-- History section -->
+    <div class="card" id="history-section">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;flex-wrap:wrap;gap:1rem">
+        <h3 style="font-size:1rem;font-family:var(--font-display)">Analysis History</h3>
+        <div style="display:flex;gap:0.75rem;flex-wrap:wrap">
+          <input type="text" id="history-search" placeholder="Search articles…"
+            style="padding:0.4rem 0.85rem;background:var(--bg-glass);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text-primary);font-size:0.85rem;font-family:var(--font-body);outline:none;width:200px"
+            oninput="Dashboard.loadHistory(1, this.value, document.getElementById('history-filter').value)">
+          <select id="history-filter"
+            style="padding:0.4rem 0.85rem;background:var(--bg-glass);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text-primary);font-size:0.85rem;font-family:var(--font-body);outline:none"
+            onchange="Dashboard.loadHistory(1, document.getElementById('history-search').value, this.value)">
+            <option value="">All Results</option>
+            <option value="FAKE">Fake Only</option>
+            <option value="REAL">Real Only</option>
+          </select>
+        </div>
+      </div>
+
+      <div style="overflow-x:auto">
+        <table class="history-table">
+          <thead>
+            <tr>
+              <th>Article Text</th>
+              <th>Result</th>
+              <th>Confidence</th>
+              <th>Credibility</th>
+              <th>Date</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="history-tbody">
+            <tr><td colspan="6" style="text-align:center;padding:3rem;color:var(--text-muted)">
+              <span class="spinner"></span> Loading…
+            </td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Empty state CTA -->
+    <div class="card" id="empty-cta" style="display:none;text-align:center;padding:3rem">
+      <div style="font-size:3rem;margin-bottom:1rem">🔍</div>
+      <h3 style="margin-bottom:0.5rem">No analyses yet</h3>
+      <p style="color:var(--text-secondary);margin-bottom:1.5rem">Start by analyzing your first news article</p>
+      <a href="/detect" class="btn btn-primary">Analyze an Article</a>
+    </div>
+
+  </main>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function showSection(id) {
+  ['overview','history','analytics'].forEach(s => {
+    const el = document.getElementById(s + '-section');
+    if (el) el.style.display = s === id ? '' : 'none';
+  });
+}
+
+// Enhance Dashboard.init with activity chart
+const _origInit = Dashboard.init.bind(Dashboard);
+Dashboard.init = async function() {
+  await _origInit();
+  this.buildActivityChart();
+};
+
+Dashboard.buildActivityChart = function() {
+  const canvas = document.getElementById('activity-chart');
+  if (!canvas || typeof Chart === 'undefined') return;
+  const days = Array.from({length: 7}, (_, i) => {
+    const d = new Date(); d.setDate(d.getDate() - (6 - i));
+    return d.toLocaleDateString('en', {weekday: 'short'});
+  });
+  // Mock activity data (in real app, fetch from /api/activity)
+  const fake = [2, 5, 3, 8, 4, 6, 3];
+  const real = [4, 3, 6, 2, 5, 4, 7];
+  new Chart(canvas, {
+    type: 'bar',
+    data: {
+      labels: days,
+      datasets: [
+        { label: 'Fake', data: fake, backgroundColor: 'rgba(255,59,92,0.7)', borderRadius: 4 },
+        { label: 'Real', data: real, backgroundColor: 'rgba(16,185,129,0.7)', borderRadius: 4 },
+      ]
+    },
+    options: {
+      responsive: true,
+      plugins: { legend: { labels: { color: 'rgba(255,255,255,0.5)', font: { family: 'DM Sans', size: 11 } } } },
+      scales: {
+        x: { ticks: { color: 'rgba(255,255,255,0.4)' }, grid: { color: 'rgba(255,255,255,0.04)' } },
+        y: { ticks: { color: 'rgba(255,255,255,0.4)', stepSize: 2 }, grid: { color: 'rgba(255,255,255,0.04)' } }
+      }
+    }
+  });
+};
+</script>
+{% endblock %}

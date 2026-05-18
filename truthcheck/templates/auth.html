@@ -1,0 +1,195 @@
+{% extends "base.html" %}
+{% block page_id %}auth{% endblock %}
+{% block title %}{% if mode == 'login' %}Login{% else %}Create Account{% endif %} — TruthCheck AI{% endblock %}
+{% block footer %}{% endblock %}
+
+{% block content %}
+<div class="auth-layout">
+
+  <!-- Visual side -->
+  <div class="auth-visual">
+    <div class="auth-visual-bg"></div>
+    <div class="auth-visual-content">
+      <div class="nav-logo" style="margin-bottom:3rem">
+        <div class="nav-logo-mark">TC</div>
+        <span class="gradient-text" style="font-family:var(--font-display);font-size:1.4rem;font-weight:800">TruthCheck</span>
+      </div>
+
+      <h2 style="font-size:2rem;font-weight:800;font-family:var(--font-display);margin-bottom:1rem;line-height:1.2">
+        Fight Misinformation<br><span class="gradient-text">with AI Power</span>
+      </h2>
+      <p style="color:var(--text-secondary);line-height:1.7;max-width:360px;margin-bottom:3rem">
+        Join over 180,000 journalists, researchers, and curious minds who use TruthCheck to verify news every day.
+      </p>
+
+      <div style="display:flex;flex-direction:column;gap:1.25rem">
+        {% for icon, text in [('🎯','94% accuracy on our validation dataset'),('⚡','Analysis results in under 2 seconds'),('🔒','Your data is encrypted and never shared'),('📊','Detailed confidence scores and explanations')] %}
+        <div style="display:flex;align-items:center;gap:0.85rem">
+          <span style="width:36px;height:36px;background:rgba(0,212,170,0.12);border:1px solid rgba(0,212,170,0.25);border-radius:8px;display:grid;place-items:center;flex-shrink:0;font-size:1rem">{{ icon }}</span>
+          <span style="font-size:0.9rem;color:var(--text-secondary)">{{ text }}</span>
+        </div>
+        {% endfor %}
+      </div>
+
+      <!-- Animated rings -->
+      <div style="position:absolute;bottom:-80px;right:-80px;width:400px;height:400px;opacity:0.15;pointer-events:none">
+        <div style="position:absolute;inset:0;border-radius:50%;border:1px solid var(--c-teal);animation:spin 20s linear infinite"></div>
+        <div style="position:absolute;inset:15%;border-radius:50%;border:1px solid var(--c-blue);animation:spin 15s linear infinite reverse"></div>
+        <div style="position:absolute;inset:35%;border-radius:50%;border:1px solid var(--c-purple);animation:spin 10s linear infinite"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Form side -->
+  <div class="auth-form-panel">
+    <div class="auth-form-inner">
+
+      <div class="auth-logo">
+        <div class="nav-logo-mark" style="display:none" id="mobile-logo-mark">TC</div>
+        <span class="gradient-text">TruthCheck</span>
+      </div>
+
+      <!-- Tab switcher -->
+      <div class="detect-tabs" style="margin-bottom:2rem">
+        <button class="detect-tab {% if mode == 'login' %}active{% endif %}" id="tab-login" onclick="switchTab('login')">Login</button>
+        <button class="detect-tab {% if mode == 'register' %}active{% endif %}" id="tab-register" onclick="switchTab('register')">Sign Up</button>
+      </div>
+
+      <!-- LOGIN FORM -->
+      <div id="login-section" {% if mode != 'login' %}style="display:none"{% endif %}>
+        <h1 class="auth-title display">Welcome back</h1>
+        <p class="auth-subtitle">Sign in to access your dashboard and history.</p>
+
+        <form id="login-form" novalidate>
+          <div class="form-group">
+            <label class="form-label" for="login-email">Email Address</label>
+            <div class="input-wrapper">
+              <span class="input-icon">✉️</span>
+              <input type="email" id="login-email" name="email" class="form-input" placeholder="you@example.com" autocomplete="email" required>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="login-password">
+              Password
+              <a href="#" style="float:right;font-size:0.78rem;color:var(--c-teal);font-weight:400">Forgot password?</a>
+            </label>
+            <div class="input-wrapper">
+              <span class="input-icon">🔒</span>
+              <input type="password" id="login-password" name="password" class="form-input" placeholder="Your password" autocomplete="current-password" required>
+              <span class="input-toggle">👁</span>
+            </div>
+          </div>
+
+          <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:1.5rem">
+            <input type="checkbox" id="remember" style="accent-color:var(--c-teal)">
+            <label for="remember" style="font-size:0.85rem;color:var(--text-secondary);cursor:pointer">Remember me for 30 days</label>
+          </div>
+
+          <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;padding:0.85rem">
+            Login to TruthCheck →
+          </button>
+        </form>
+
+        <div style="text-align:center;margin-top:1.5rem;font-size:0.875rem;color:var(--text-muted)">
+          Don't have an account? <button onclick="switchTab('register')" style="color:var(--c-teal);font-weight:600;background:none;border:none;cursor:pointer">Sign up free</button>
+        </div>
+
+        <!-- Demo credentials -->
+        <div style="margin-top:1.5rem;padding:1rem;background:rgba(0,212,170,0.05);border:1px solid rgba(0,212,170,0.15);border-radius:var(--radius);font-size:0.8rem">
+          <strong style="color:var(--c-teal)">Demo credentials:</strong><br>
+          <span style="color:var(--text-muted)">Admin: admin@truthcheck.ai / Admin@123!</span>
+        </div>
+      </div>
+
+      <!-- REGISTER FORM -->
+      <div id="register-section" {% if mode != 'register' %}style="display:none"{% endif %}>
+        <h1 class="auth-title display">Create account</h1>
+        <p class="auth-subtitle">Start detecting fake news for free. No credit card required.</p>
+
+        <form id="register-form" novalidate>
+          <div class="form-group">
+            <label class="form-label" for="reg-username">Username</label>
+            <div class="input-wrapper">
+              <span class="input-icon">👤</span>
+              <input type="text" id="reg-username" name="username" class="form-input" placeholder="johndoe" autocomplete="username" minlength="3" required>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="reg-email">Email Address</label>
+            <div class="input-wrapper">
+              <span class="input-icon">✉️</span>
+              <input type="email" id="reg-email" name="email" class="form-input" placeholder="you@example.com" autocomplete="email" required>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="reg-password">Password</label>
+            <div class="input-wrapper">
+              <span class="input-icon">🔒</span>
+              <input type="password" id="reg-password" name="password" class="form-input" placeholder="At least 8 characters" autocomplete="new-password" minlength="8" required>
+              <span class="input-toggle">👁</span>
+            </div>
+            <!-- Password strength -->
+            <div id="pw-strength" style="display:flex;gap:4px;margin-top:6px">
+              <div style="height:3px;flex:1;border-radius:2px;background:var(--border)" id="ps1"></div>
+              <div style="height:3px;flex:1;border-radius:2px;background:var(--border)" id="ps2"></div>
+              <div style="height:3px;flex:1;border-radius:2px;background:var(--border)" id="ps3"></div>
+              <div style="height:3px;flex:1;border-radius:2px;background:var(--border)" id="ps4"></div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="reg-confirm">Confirm Password</label>
+            <div class="input-wrapper">
+              <span class="input-icon">🔒</span>
+              <input type="password" id="reg-confirm" name="confirm_password" class="form-input" placeholder="Repeat your password" autocomplete="new-password" required>
+              <span class="input-toggle">👁</span>
+            </div>
+          </div>
+
+          <div style="margin-bottom:1.5rem;font-size:0.82rem;color:var(--text-muted)">
+            By creating an account you agree to our <a href="#" style="color:var(--c-teal)">Terms of Service</a> and <a href="#" style="color:var(--c-teal)">Privacy Policy</a>.
+          </div>
+
+          <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;padding:0.85rem">
+            Create Free Account →
+          </button>
+        </form>
+
+        <div style="text-align:center;margin-top:1.5rem;font-size:0.875rem;color:var(--text-muted)">
+          Already have an account? <button onclick="switchTab('login')" style="color:var(--c-teal);font-weight:600;background:none;border:none;cursor:pointer">Sign in</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function switchTab(tab) {
+  document.getElementById('login-section').style.display = tab === 'login' ? '' : 'none';
+  document.getElementById('register-section').style.display = tab === 'register' ? '' : 'none';
+  document.getElementById('tab-login').classList.toggle('active', tab === 'login');
+  document.getElementById('tab-register').classList.toggle('active', tab === 'register');
+  window.history.replaceState({}, '', tab === 'login' ? '/login' : '/register');
+}
+
+// Password strength meter
+document.getElementById('reg-password')?.addEventListener('input', function() {
+  const pw = this.value;
+  let score = 0;
+  if (pw.length >= 8) score++;
+  if (/[A-Z]/.test(pw)) score++;
+  if (/[0-9]/.test(pw)) score++;
+  if (/[^A-Za-z0-9]/.test(pw)) score++;
+  const colors = ['', 'var(--c-red)', 'var(--c-amber)', 'var(--c-teal)', 'var(--c-green)'];
+  for (let i = 1; i <= 4; i++) {
+    document.getElementById('ps' + i).style.background = i <= score ? colors[score] : 'var(--border)';
+  }
+});
+</script>
+{% endblock %}

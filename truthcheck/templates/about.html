@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+{% block page_id %}about{% endblock %}
+{% block title %}About — TruthCheck AI{% endblock %}
+
+{% block content %}
+<div style="padding:calc(var(--nav-h) + 3rem) 5% 6rem;position:relative;z-index:2">
+  <div class="container">
+
+    <!-- Hero -->
+    <div style="max-width:720px;margin:0 auto 5rem;text-align:center" class="reveal">
+      <div class="section-tag">Our Mission</div>
+      <h1 class="section-title display" style="font-size:clamp(2.2rem,5vw,3.5rem);margin-bottom:1.25rem">
+        Building a More <span class="gradient-text">Informed World</span>
+      </h1>
+      <p style="font-size:1.05rem;color:var(--text-secondary);line-height:1.75">
+        TruthCheck was founded on the belief that everyone deserves access to reliable tools 
+        for verifying information. In an era of rampant misinformation, AI can be a powerful 
+        ally in the fight for truth.
+      </p>
+    </div>
+
+    <!-- Story -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:3rem;align-items:center;margin-bottom:5rem" class="reveal">
+      <div>
+        <div class="section-tag" style="margin-bottom:1rem">Our Story</div>
+        <h2 style="font-size:1.75rem;margin-bottom:1.25rem">Started by a Team of <span class="gradient-text">AI Researchers</span></h2>
+        <p style="color:var(--text-secondary);line-height:1.8;margin-bottom:1rem">
+          TruthCheck began as a research project studying the linguistic patterns that distinguish 
+          real journalism from fabricated content. What started as an academic paper became a 
+          platform used by hundreds of thousands globally.
+        </p>
+        <p style="color:var(--text-secondary);line-height:1.8">
+          We train our models on diverse datasets and continuously improve them based on user feedback 
+          and new misinformation trends. Our commitment is to accuracy, transparency, and accessibility.
+        </p>
+      </div>
+      <div class="card card-glow" style="padding:2rem">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem">
+          {% for value, label, color in [
+            ('94%','Model Accuracy','var(--c-teal)'),
+            ('2.4M+','Articles Analyzed','var(--c-blue)'),
+            ('180K+','Active Users','var(--c-purple)'),
+            ('2022','Year Founded','var(--c-amber)'),
+          ] %}
+          <div style="text-align:center;padding:1rem;background:var(--bg-glass);border-radius:var(--radius)">
+            <div style="font-family:var(--font-display);font-size:1.75rem;font-weight:800;color:{{ color }}">{{ value }}</div>
+            <div style="font-size:0.8rem;color:var(--text-muted);margin-top:0.25rem">{{ label }}</div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+
+    <!-- Tech Stack -->
+    <div style="margin-bottom:5rem" class="reveal">
+      <div class="section-header">
+        <div class="section-tag">Technology</div>
+        <h2 class="section-title">The Tech Behind <span class="gradient-text">TruthCheck</span></h2>
+      </div>
+      <div class="features-grid">
+        {% for icon, title, desc in [
+          ('🧠','Machine Learning','TF-IDF vectorization combined with Logistic Regression and PassiveAggressiveClassifier, trained on curated datasets of verified real and fake news.'),
+          ('🐍','Python Backend','Flask-powered REST API with SQLAlchemy ORM, JWT authentication, and a modular architecture designed for reliability and scale.'),
+          ('🎨','Modern Frontend','Vanilla JS with premium glassmorphism UI, smooth animations, dark/light mode, and full mobile responsiveness — no framework bloat.'),
+          ('🔒','Security First','Bcrypt password hashing, JWT tokens, CORS protection, input validation, and rate limiting to keep your data safe.'),
+          ('📊','Analytics','Chart.js powered dashboards with real-time stats, prediction history, and user behavior analytics.'),
+          ('🐳','Cloud Ready','Docker containerized deployment with environment-based config. Deploy to AWS, GCP, or any VPS in minutes.'),
+        ] %}
+        <div class="card card-glow reveal">
+          <div class="feature-icon">{{ icon }}</div>
+          <h3 class="feature-title">{{ title }}</h3>
+          <p class="feature-desc">{{ desc }}</p>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- Team -->
+    <div class="reveal">
+      <div class="section-header">
+        <div class="section-tag">Team</div>
+        <h2 class="section-title">Meet the <span class="gradient-text">Builders</span></h2>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1.25rem">
+        {% for emoji, name, role in [
+          ('🧑‍💻','Alex Chen','Lead ML Engineer'),
+          ('👩‍🔬','Priya Sharma','NLP Researcher'),
+          ('🧑‍🎨','Marcus Webb','Design Lead'),
+          ('👩‍💼','Sarah Kim','Product Manager'),
+        ] %}
+        <div class="card" style="text-align:center;padding:1.75rem 1rem">
+          <div style="width:64px;height:64px;border-radius:50%;background:var(--grad-brand);display:grid;place-items:center;font-size:1.75rem;margin:0 auto 1rem">{{ emoji }}</div>
+          <div style="font-weight:700;margin-bottom:0.25rem">{{ name }}</div>
+          <div style="font-size:0.8rem;color:var(--text-muted)">{{ role }}</div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+
+  </div>
+</div>
+{% endblock %}

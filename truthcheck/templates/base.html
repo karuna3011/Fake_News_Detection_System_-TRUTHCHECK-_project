@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="{% block meta_desc %}TruthCheck — AI-powered fake news detection platform. Analyze articles instantly with our advanced machine learning model.{% endblock %}">
+  <meta property="og:title" content="{% block og_title %}TruthCheck AI{% endblock %}">
+  <meta name="theme-color" content="#00d4aa">
+  <title>{% block title %}TruthCheck — AI Fake News Detector{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+  {% block extra_css %}{% endblock %}
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔍</text></svg>">
+</head>
+<body data-page="{% block page_id %}{% endblock %}">
+
+<canvas id="particles-canvas"></canvas>
+<div class="toast-container"></div>
+
+<!-- Navigation -->
+<nav class="navbar" id="navbar">
+  <a href="/" class="nav-logo">
+    <div class="nav-logo-mark">TC</div>
+    <span class="gradient-text">TruthCheck</span>
+  </a>
+
+  <ul class="nav-links" id="nav-links">
+    <li><a href="/">Home</a></li>
+    <li><a href="/detect">Detect</a></li>
+    <li><a href="/about">About</a></li>
+    <li><a href="/pricing">Pricing</a></li>
+    <li><a href="/contact">Contact</a></li>
+  </ul>
+
+  <div class="nav-actions">
+    <button class="theme-toggle" title="Toggle theme">
+      <span class="theme-icon">☀️</span>
+    </button>
+    <div class="nav-auth" style="display:flex;gap:0.5rem">
+      <a href="/login" class="btn btn-ghost btn-sm">Login</a>
+      <a href="/register" class="btn btn-primary btn-sm">Get Started</a>
+    </div>
+    <button class="nav-hamburger" id="hamburger" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+{% block content %}{% endblock %}
+
+<!-- Footer -->
+{% block footer %}
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <div class="nav-logo" style="margin-bottom:1rem">
+          <div class="nav-logo-mark">TC</div>
+          <span class="gradient-text">TruthCheck</span>
+        </div>
+        <p style="font-size:0.875rem;color:var(--text-muted);max-width:240px;line-height:1.7">
+          AI-powered fake news detection for a more informed world. Built with science, driven by truth.
+        </p>
+      </div>
+      <div>
+        <h4 style="font-size:0.8rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-muted);margin-bottom:1rem">Product</h4>
+        <ul class="footer-links">
+          <li><a href="/detect">Detection Tool</a></li>
+          <li><a href="/dashboard">Dashboard</a></li>
+          <li><a href="/pricing">Pricing</a></li>
+          <li><a href="/api/health">API Status</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 style="font-size:0.8rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-muted);margin-bottom:1rem">Company</h4>
+        <ul class="footer-links">
+          <li><a href="/about">About</a></li>
+          <li><a href="/contact">Contact</a></li>
+          <li><a href="#">Blog</a></li>
+          <li><a href="#">Press Kit</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 style="font-size:0.8rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-muted);margin-bottom:1rem">Legal</h4>
+        <ul class="footer-links">
+          <li><a href="#">Privacy Policy</a></li>
+          <li><a href="#">Terms of Service</a></li>
+          <li><a href="#">Cookie Policy</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2025 TruthCheck AI. All rights reserved.</span>
+      <span>Built with 🔍 and machine learning</span>
+    </div>
+  </div>
+</footer>
+{% endblock %}
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+{% block extra_js %}{% endblock %}
+</body>
+</html>
